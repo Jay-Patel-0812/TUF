@@ -1,0 +1,102 @@
+// time C: O(N + E)
+// Space C: O(N + E) + O(N) + O(N)
+
+bool isCycle(int V, vector<int> adj[]) {
+    vector<int> vis(V, 0);
+    for(int i = 0;i < V; i++){
+        if(!vis[i]){
+            queue<pair<int, int> > q;
+            q.push({i, -1});
+            vis[i] = 1;
+            pair<int, int> temp;
+            while(!q.empty()){
+                temp = q.front();
+                q.pop();
+                for(int i = 0;i < adj[temp.first].size(); i++){
+                    if(!vis[adj[temp.first][i]]){
+                        q.push({adj[temp.first][i], temp.first});
+                        vis[adj[temp.first][i]] = 1;
+                    }
+                    else if(temp.second != adj[temp.first][i]){
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    
+    return false;
+}
+
+
+
+#include<queue>
+#include<iostream>
+
+using namespace std;
+class Solution
+{
+public:
+    bool checkForCycle(int s, int V, vector<int> adj[], vector<int> &visited)
+    {
+        // Create a queue for BFS
+        queue<pair<int, int>> q;
+        visited[s] = true;
+        q.push({s, -1});
+        while (!q.empty())
+        {
+            int node = q.front().first;
+            int par = q.front().second;
+            q.pop();
+ 
+            for (auto it : adj[node])
+            {
+                if (!visited[it])
+                {
+                    visited[it] = true;
+                    q.push({it, node});
+                }
+                else if (par != it)
+                    return true;
+            }
+        }
+        return false;
+    }
+    bool isCycle(int V, vector<int> adj[])
+    {
+        vector<int> vis(V - 1, 0);
+        for (int i = 1; i <= V; i++)
+        {
+            if (!vis[i])
+            {
+                if (checkForCycle(i, V, adj, vis))
+                    return true;
+            }
+        }
+    }
+};
+ 
+void addEdge(vector<int> adj[],int u,int v)
+{
+    adj[u].push_back(v);
+    adj[v].push_back(u);
+}
+int main()
+{
+    vector<int> adj[5];
+   
+    addEdge(adj,0,1);
+    addEdge(adj,0,2);
+    addEdge(adj,2,3);
+    addEdge(adj,1,3);
+    addEdge(adj,2,4);
+   
+    Solution obj;
+    int num=obj.isCycle(5, adj);
+    if(num==1)
+    cout<<"Yes"<<endl;
+    else
+    cout<<"No"<<endl;
+ 
+    return 0;
+}
